@@ -32,7 +32,7 @@ void AViControllableActor::BeginPlay()
     SetSavedMobility();
 
     auto playerController = UGameplayStatics::GetPlayerController( GetWorld(), 0 );
-    if ( ensure( playerController != nullptr ) ) {
+    if ( ensure( playerController->IsValidLowLevelFast() ) ) {
         EnableInput( playerController );
 
         if ( EnableDefaultInputBindings ) {
