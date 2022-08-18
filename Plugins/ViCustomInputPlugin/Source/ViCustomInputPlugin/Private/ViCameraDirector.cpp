@@ -9,6 +9,8 @@ AViCameraDirector::AViCameraDirector()
     TimeBetweenCameraChanges = 2.0f;
     NextIndex = 0;
     ChangingCamera = false;
+
+    PrimaryActorTick.bCanEverTick = true;
 }
 
 void AViCameraDirector::BeginPlay()
@@ -16,8 +18,10 @@ void AViCameraDirector::BeginPlay()
     Super::BeginPlay();
 
     auto playerController = UGameplayStatics::GetPlayerController( GetWorld(), 0 );
-    if ( ensure ( playerController->IsValidLowLevelFast() ) )
+    if ( ensure ( playerController->IsValidLowLevelFast() ) ) {
         EnableInput( playerController );
+        SavedCamera = playerController->GetViewTarget();
+    }
 
     DelayExecutor = MakeShareable( new FViDelayExecutor( GetWorld(), TimeBetweenCameraChanges, 
         [this]{ NextChangeCamera(); } ) );
@@ -64,4 +68,10 @@ void AViCameraDirector::ChangeCamera( AActor* InCamera )
     auto playerController = UGameplayStatics::GetPlayerController( GetWorld(), 0 );
     if ( ensure( playerController->IsValidLowLevelFast() ) )
         playerController->SetViewTargetWithBlend( InCamera, SmoothBlendTime );
+}
+
+void AViCameraDirector::RestoreCamera()
+{
+    if ( ensure( SavedCamera.IsValid() ) )
+        ChangeCamera( SavedCamera.Get() );
 }

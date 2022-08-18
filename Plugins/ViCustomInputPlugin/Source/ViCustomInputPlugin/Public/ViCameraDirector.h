@@ -21,6 +21,8 @@ public:
     void StopChangeCamera();
     UFUNCTION( BlueprintCallable, Category="ViCustomInputPlugin" )
     void NextChangeCamera();
+    UFUNCTION( BlueprintCallable, Category="ViCustomInputPlugin" )
+    void RestoreCamera();
 
 private:
     void ChangeCamera( AActor* InCamera );
@@ -38,4 +40,5 @@ private:
     int32 NextIndex;
     bool ChangingCamera;
     TSharedPtr<class FViDelayExecutor> DelayExecutor;
+    TWeakObjectPtr<AActor> SavedCamera;
 };
